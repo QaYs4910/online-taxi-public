@@ -21,6 +21,7 @@
     <!-- 子项目信息 -->
     <modules>
         <module>api-passenger</module>
+        <module>service-verificationcode</module>
     </modules>
 
 
