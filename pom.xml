@@ -3,9 +3,19 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <!-- 定义父pom的版本 -->
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.4.13</version>
+    </parent>
+
+    <!-- 项目为pom父工程文件   -->
+    <packaging>pom</packaging>
+
+    <!-- 当前项目的AVG坐标信息   -->
     <groupId>com.mashibing</groupId>
     <artifactId>online-taxi-public</artifactId>
-    <packaging>pom</packaging>
     <version>0.0.1-SNAPSHOT</version>
 
     <!-- 子项目信息 -->
