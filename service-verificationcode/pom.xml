@@ -26,5 +26,12 @@
             <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
             <version>2021.1</version>
         </dependency>
+
+        <!-- 公共模块依赖  -->
+        <dependency>
+            <artifactId>internal-common</artifactId>
+            <groupId>com.mashibing</groupId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 </project>
