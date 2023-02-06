@@ -17,6 +17,7 @@ public class NumberCodeController {
         int result = (int)((Math.random()*9+ 1) * (Math.pow(10,size - 1)));
         NumberCodeResponse numberCodeResponse = new NumberCodeResponse();
         numberCodeResponse.setNumberCode(result);
+        System.out.println("收到请求返回验证码:"+result);
         return ResponseResult.success(numberCodeResponse);
     }
 
