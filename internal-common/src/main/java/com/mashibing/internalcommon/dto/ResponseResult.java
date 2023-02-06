@@ -13,6 +13,13 @@ public class ResponseResult<T> {
     private T data;
 
     /**
+     * 默认返回正确值方法
+     * @return
+     */
+    public static ResponseResult success(){
+        return new ResponseResult().setCode(CommonStatusConstant.SUCCESS.getCode()).setMessage(CommonStatusConstant.SUCCESS.getValue());
+    }
+    /**
      * 成功的响应
      * @param data
      * @return
