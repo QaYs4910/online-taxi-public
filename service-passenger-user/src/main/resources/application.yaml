@@ -7,3 +7,8 @@ spring:
         server-addr: 127.0.0.1:8848
   application:
     name: service-passenger-user
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/service-passenger-user?characterEncoding=utf-8&Timezone=GMT%2B8 #驱动为8以上的版本需要添添加时区
+    username: root
+    password: QaYs4910
