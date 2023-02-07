@@ -44,6 +44,12 @@
             <classifier>jdk15</classifier>
             <version>2.4</version>
         </dependency>
+        <!-- 公共模块依赖  -->
+        <dependency>
+            <artifactId>internal-common</artifactId>
+            <groupId>com.mashibing</groupId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 
     <dependencyManagement>
