@@ -1,9 +1,11 @@
 package com.mashibing.apipassenger.service.imp;
 
+import com.mashibing.apipassenger.remote.ServicePassengerClient;
 import com.mashibing.apipassenger.remote.ServiceVerificationCodeClient;
 import com.mashibing.apipassenger.service.VerificationCodeService;
 import com.mashibing.internalcommon.constant.CommonStatusConstant;
 import com.mashibing.internalcommon.dto.ResponseResult;
+import com.mashibing.internalcommon.request.VerificationCodeDTO;
 import com.mashibing.internalcommon.response.NumberCodeResponse;
 import com.mashibing.internalcommon.response.TokenResponse;
 import lombok.RequiredArgsConstructor;
@@ -21,8 +23,10 @@ public class VerificationCodeServiceImp implements VerificationCodeService {
     private String verificationCodePrefix = "passenger-verification-code";
     //验证码的生成位数
     private static final int NUMBER_CODE_SIZE = 6;
-    //remote client interface
+    //remote client interface serviceVerificationCode
     private final ServiceVerificationCodeClient serviceVerificationCodeClient;
+    //remote client interface servicePassenger
+    private final ServicePassengerClient servicePassengerClient;
     //StringRedisTemplate
     private final StringRedisTemplate stringRedisTemplate;
 
@@ -66,7 +70,7 @@ public class VerificationCodeServiceImp implements VerificationCodeService {
         /**
          * 1.根据手机号查询redis中的手机验证码是否存在
          * 2.检验验证码是否是否正确
-         * 3.判断用户是否登录
+         * 3.判断用户是否登录 调用 passenger-user服务进行登录或注册
          * 4.颁发令牌
          */
 
@@ -86,6 +90,10 @@ public class VerificationCodeServiceImp implements VerificationCodeService {
             return ResponseResult.fail(CommonStatusConstant.VERIFICATION_CODE_ERROR.getCode(),CommonStatusConstant.VERIFICATION_CODE_ERROR.getValue());
         }
         System.out.println("判断用户是否登录");
+        VerificationCodeDTO verificationCodeDTO = new VerificationCodeDTO();
+        verificationCodeDTO.setPassengerPhone(passengerPhone);
+        ResponseResult responseResult = this.servicePassengerClient.loginOrRegister(verificationCodeDTO);
+
         System.out.println("颁发令牌");
         TokenResponse tokenResponse = new TokenResponse();
         tokenResponse.setToken("token value");
