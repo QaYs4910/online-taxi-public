@@ -1,6 +1,8 @@
 package com.mashibing.internalcommon.constant;
 
 public enum CommonStatusConstant {
+
+    VERIFICATION_CODE_ERROR(1099,"验证码不正确"),
     /**
      * 成功
      */
