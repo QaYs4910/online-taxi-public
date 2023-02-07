@@ -7,6 +7,7 @@ import com.mashibing.servicepassengeruser.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 
@@ -27,8 +28,18 @@ public class UserServiceImp implements UserService {
         HashMap<String, Object> map = new HashMap<>();
         map.put("passenger_phone",passengerPhone);
         List<PassengerUser> passengerUsers = this.passengerUserMapper.selectByMap(map);
-        System.out.println(passengerUsers == null?"无记录":passengerUsers.get(0).getPassengerPhone());
         //2.判断用户是否存在
+        if(passengerUsers.size() == 0){
+            PassengerUser passengerUser = new PassengerUser();
+            passengerUser.setPassengerName("张三");
+            passengerUser.setPassengerPhone(passengerPhone);
+            passengerUser.setPassengerGender((byte)1);
+            passengerUser.setState((byte)0);
+            LocalDateTime now = LocalDateTime.now();
+            passengerUser.setGmtCreate(now);
+            passengerUser.setGmtModified(now);
+            this.passengerUserMapper.insert(passengerUser);
+        }
         //3.如果不存在插入一条新纪录
         return ResponseResult.success();
     }
