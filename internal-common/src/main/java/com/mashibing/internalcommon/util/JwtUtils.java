@@ -19,13 +19,14 @@ public class JwtUtils {
     //身份表示区分 乘客1 ,司机2
     private static final String JWT_KEY_IDENTITY = "identity";
 
+    private static final String JWT_TOKEN_TYPE = "tokenType";
     //根据手机号的和身份标识来区分是乘客端还是司机端
-    public static String  generatorToken(String passengerPhone,String identity){
+    public static String  generatorToken(String passengerPhone,String identity,String tokenType){
 
         Map<String,String> map = new HashMap<>();
         map.put(JWT_KEY,passengerPhone);
         map.put(JWT_KEY_IDENTITY,identity);
-
+        map.put(JWT_TOKEN_TYPE,tokenType);
         //1.生成token的过期时间
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DATE,1);
@@ -55,7 +56,7 @@ public class JwtUtils {
 
     public static void main(String[] args) {
         System.out.println("生成token");
-        String s = JwtUtils.generatorToken("17521209671","1");
+        String s = JwtUtils.generatorToken("17521209671","1","");
         System.out.println(s);
         TokenResult tokenResult = JwtUtils.DeCodeJWTparseToken(s);
         System.out.println(tokenResult.getIdentity());

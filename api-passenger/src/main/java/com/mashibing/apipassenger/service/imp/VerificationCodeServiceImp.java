@@ -5,8 +5,9 @@ import com.alibaba.cloud.commons.lang.StringUtils;
 import com.mashibing.apipassenger.remote.ServicePassengerClient;
 import com.mashibing.apipassenger.remote.ServiceVerificationCodeClient;
 import com.mashibing.apipassenger.service.VerificationCodeService;
-import com.mashibing.internalcommon.constant.CommonStatusConstant;
-import com.mashibing.internalcommon.constant.IdentityConstant;
+import com.mashibing.internalcommon.constant.CommonStatusEnum;
+import com.mashibing.internalcommon.constant.IdentityConstants;
+import com.mashibing.internalcommon.constant.TokenTypeConstants;
 import com.mashibing.internalcommon.dto.ResponseResult;
 import com.mashibing.internalcommon.request.VerificationCodeDTO;
 import com.mashibing.internalcommon.response.NumberCodeResponse;
@@ -89,10 +90,10 @@ public class VerificationCodeServiceImp implements VerificationCodeService {
 
         System.out.println("检验验证码是否是否正确");
         if(StringUtils.isBlank(codeRedis)){
-            return ResponseResult.fail(CommonStatusConstant.VERIFICATION_CODE_ERROR.getCode(),CommonStatusConstant.VERIFICATION_CODE_ERROR.getValue());
+            return ResponseResult.fail(CommonStatusEnum.VERIFICATION_CODE_ERROR.getCode(), CommonStatusEnum.VERIFICATION_CODE_ERROR.getValue());
         }
         if(!codeRedis.trim().equals(verificationCode.trim())){
-            return ResponseResult.fail(CommonStatusConstant.VERIFICATION_CODE_ERROR.getCode(),CommonStatusConstant.VERIFICATION_CODE_ERROR.getValue());
+            return ResponseResult.fail(CommonStatusEnum.VERIFICATION_CODE_ERROR.getCode(), CommonStatusEnum.VERIFICATION_CODE_ERROR.getValue());
         }
         System.out.println("判断用户是否登录");
         VerificationCodeDTO verificationCodeDTO = new VerificationCodeDTO();
@@ -100,17 +101,28 @@ public class VerificationCodeServiceImp implements VerificationCodeService {
         ResponseResult responseResult = this.servicePassengerClient.loginOrRegister(verificationCodeDTO);
 
         System.out.println("颁发令牌");
-        //格局手机号的身份标识颁发令牌
-        String tokenValue = JwtUtils.generatorToken(passengerPhone, IdentityConstant.PASSENGER_PHONE);
-
-        String tokenKey = RedisPrefixUtils.generatorTokenKey(passengerPhone, IdentityConstant.PASSENGER_PHONE);
         /**
-         * 1.将生成的tokenValue保存在redis中
-         * 2.根据手机号和身份标识生成的字符串作为key
+         * 双token的检验
+         *
+         * accessToken 成功的token每次都会检验该token
+         * refreshToken 刷新使用的token在accessToken失效之后使用
+         * refreshToken 要比accessToken时常要比accessToken稍微长一些
+         *
          */
-        this.stringRedisTemplate.opsForValue().set(tokenKey,tokenValue,30,TimeUnit.DAYS);
+        String accessToken = JwtUtils.generatorToken(passengerPhone, IdentityConstants.PASSENGER_PHONE,TokenTypeConstants.ACCESS_TOKEN_TYPE);
+        String refreshToken = JwtUtils.generatorToken(passengerPhone, IdentityConstants.PASSENGER_PHONE,TokenTypeConstants.REFRESH_TOKEN_TYPE);
+        /**
+         * 根据身份标识和tokenType生成tokenRedisKey,将数据保存在redis
+         */
+        String accessTokenKey = RedisPrefixUtils.generatorTokenKey(passengerPhone, IdentityConstants.PASSENGER_PHONE,TokenTypeConstants.ACCESS_TOKEN_TYPE);
+        String refreshTokenKey = RedisPrefixUtils.generatorTokenKey(passengerPhone, IdentityConstants.PASSENGER_PHONE,TokenTypeConstants.REFRESH_TOKEN_TYPE);
+
+        this.stringRedisTemplate.opsForValue().set(accessTokenKey,accessToken,30,TimeUnit.DAYS);
+        this.stringRedisTemplate.opsForValue().set(refreshTokenKey,refreshToken,31,TimeUnit.DAYS);
+
         TokenResponse tokenResponse = new TokenResponse();
-        tokenResponse.setToken(tokenValue);
+        tokenResponse.setAccessToken(accessToken);
+        tokenResponse.setRefreshToken(refreshToken);
         return ResponseResult.success(tokenResponse);
     }
 

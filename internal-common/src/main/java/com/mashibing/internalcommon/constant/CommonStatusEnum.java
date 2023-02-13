@@ -1,6 +1,6 @@
 package com.mashibing.internalcommon.constant;
 
-public enum CommonStatusConstant {
+public enum CommonStatusEnum {
 
     VERIFICATION_CODE_ERROR(1099,"验证码不正确"),
     /**
@@ -16,7 +16,7 @@ public enum CommonStatusConstant {
     private int code;
     private String value;
 
-    CommonStatusConstant(int code, String value) {
+    CommonStatusEnum(int code, String value) {
         this.code = code;
         this.value = value;
     }

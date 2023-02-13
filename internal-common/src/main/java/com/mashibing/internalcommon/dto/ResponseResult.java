@@ -1,6 +1,6 @@
 package com.mashibing.internalcommon.dto;
 
-import com.mashibing.internalcommon.constant.CommonStatusConstant;
+import com.mashibing.internalcommon.constant.CommonStatusEnum;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -17,7 +17,7 @@ public class ResponseResult<T> {
      * @return
      */
     public static ResponseResult success(){
-        return new ResponseResult().setCode(CommonStatusConstant.SUCCESS.getCode()).setMessage(CommonStatusConstant.SUCCESS.getValue());
+        return new ResponseResult().setCode(CommonStatusEnum.SUCCESS.getCode()).setMessage(CommonStatusEnum.SUCCESS.getValue());
     }
     /**
      * 成功的响应
@@ -26,7 +26,7 @@ public class ResponseResult<T> {
      * @param <T>
      */
     public static <T> ResponseResult success( T data){
-        return new ResponseResult().setCode(CommonStatusConstant.SUCCESS.getCode()).setMessage(CommonStatusConstant.SUCCESS.getValue()).setData(data);
+        return new ResponseResult().setCode(CommonStatusEnum.SUCCESS.getCode()).setMessage(CommonStatusEnum.SUCCESS.getValue()).setData(data);
     }
 
     /**
