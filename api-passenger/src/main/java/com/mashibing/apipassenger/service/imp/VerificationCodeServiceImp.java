@@ -120,6 +120,8 @@ public class VerificationCodeServiceImp implements VerificationCodeService {
         this.stringRedisTemplate.opsForValue().set(accessTokenKey,accessToken,30,TimeUnit.DAYS);
         this.stringRedisTemplate.opsForValue().set(refreshTokenKey,refreshToken,31,TimeUnit.DAYS);
 
+//        this.stringRedisTemplate.opsForValue().set(accessTokenKey,accessToken,10,TimeUnit.SECONDS);
+//        this.stringRedisTemplate.opsForValue().set(refreshTokenKey,refreshToken,30,TimeUnit.SECONDS);
         TokenResponse tokenResponse = new TokenResponse();
         tokenResponse.setAccessToken(accessToken);
         tokenResponse.setRefreshToken(refreshToken);

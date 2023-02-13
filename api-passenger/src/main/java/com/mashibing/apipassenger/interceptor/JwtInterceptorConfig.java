@@ -29,7 +29,7 @@ public class JwtInterceptorConfig implements WebMvcConfigurer {
                 .addPathPatterns("/**")   //拦截所有
                 //不需要拦截的路径
                 .excludePathPatterns("/noAuthTest") //不需要拦截的路径
-                .excludePathPatterns(Arrays.asList("/verification-code","/verification-code-check"));
+                .excludePathPatterns(Arrays.asList("/verification-code","/verification-code-check","/token-refresh"));
     }
 
 }
