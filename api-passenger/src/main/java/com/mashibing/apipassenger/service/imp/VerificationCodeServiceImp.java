@@ -1,15 +1,18 @@
 package com.mashibing.apipassenger.service.imp;
 
+
+import com.alibaba.cloud.commons.lang.StringUtils;
 import com.mashibing.apipassenger.remote.ServicePassengerClient;
 import com.mashibing.apipassenger.remote.ServiceVerificationCodeClient;
 import com.mashibing.apipassenger.service.VerificationCodeService;
 import com.mashibing.internalcommon.constant.CommonStatusConstant;
+import com.mashibing.internalcommon.constant.IdentityConstant;
 import com.mashibing.internalcommon.dto.ResponseResult;
 import com.mashibing.internalcommon.request.VerificationCodeDTO;
 import com.mashibing.internalcommon.response.NumberCodeResponse;
 import com.mashibing.internalcommon.response.TokenResponse;
+import com.mashibing.internalcommon.util.JwtUtils;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -95,8 +98,10 @@ public class VerificationCodeServiceImp implements VerificationCodeService {
         ResponseResult responseResult = this.servicePassengerClient.loginOrRegister(verificationCodeDTO);
 
         System.out.println("颁发令牌");
+        //格局手机号的身份标识颁发令牌
+        String token = JwtUtils.generatorToken(passengerPhone, IdentityConstant.PASSENGER_PHONE);
         TokenResponse tokenResponse = new TokenResponse();
-        tokenResponse.setToken("token value");
+        tokenResponse.setToken(token);
         return ResponseResult.success(tokenResponse);
     }
 

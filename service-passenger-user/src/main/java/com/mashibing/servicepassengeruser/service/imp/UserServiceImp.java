@@ -30,7 +30,7 @@ public class UserServiceImp implements UserService {
         List<PassengerUser> passengerUsers = this.passengerUserMapper.selectByMap(map);
         //2.判断用户是否存在
         if(passengerUsers.size() == 0){
-            //3.如果不存在插入一条新纪录
+            //3.如果不存在插入一条新纪录(数据库主键自增不需要设置id值)
             PassengerUser passengerUser = new PassengerUser();
             passengerUser.setPassengerName("张三");
             passengerUser.setPassengerPhone(passengerPhone);
