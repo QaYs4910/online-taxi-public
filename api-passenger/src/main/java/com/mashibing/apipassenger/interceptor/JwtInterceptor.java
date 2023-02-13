@@ -4,16 +4,24 @@ import com.auth0.jwt.exceptions.AlgorithmMismatchException;
 import com.auth0.jwt.exceptions.SignatureVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.mashibing.internalcommon.dto.ResponseResult;
+import com.mashibing.internalcommon.dto.TokenResult;
 import com.mashibing.internalcommon.util.JwtUtils;
+import com.mashibing.internalcommon.util.RedisPrefixUtils;
 import net.sf.json.JSONObject;
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
-
 public class JwtInterceptor implements HandlerInterceptor {
 
+
+
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
     /**
      * Jwt验证是否通过
      * @param request 请求
@@ -33,6 +41,8 @@ public class JwtInterceptor implements HandlerInterceptor {
          * 返回异常信息
          */
         String resultString = "";
+
+        TokenResult tokenResult = null;
         /**
          * 前端将token存入 Authorization 中 后段通过获取参数值进行解析判断
          */
@@ -40,7 +50,7 @@ public class JwtInterceptor implements HandlerInterceptor {
         System.out.println(token);
         //mac option command t (try catch 快捷键)
         try {
-            JwtUtils.DeCodeJWTparseToken(token);
+             tokenResult = JwtUtils.DeCodeJWTparseToken(token);
         } catch (SignatureVerificationException e) {
             resultString = "token sign error";
             result = false;
@@ -53,6 +63,29 @@ public class JwtInterceptor implements HandlerInterceptor {
         } catch (Exception e){
             resultString = "token invalid";
             result = false;
+        }
+        if(null == tokenResult){
+            resultString = "token invalid";
+            result = false;
+        }else {
+            //不为空
+            String phone = tokenResult.getPhone();
+            String identity = tokenResult.getIdentity();
+            //生成redis中key
+            String tokenKey = RedisPrefixUtils.generatorTokenKey(phone, identity);
+            //查询redis中的值
+            String tokenValue = this.stringRedisTemplate.opsForValue().get(tokenKey);
+            //如果为空抛异常
+            if(StringUtils.isBlank(tokenValue)){
+                resultString = "token invalid";
+                result = false;
+            }else {
+                //前段获取的token和redis中的token不匹配
+                if(!token.trim().equals(tokenValue.trim())){
+                    resultString = "token invalid";
+                    result = false;
+                }
+            }
         }
 
         //如果出现异常将异常返回前端
